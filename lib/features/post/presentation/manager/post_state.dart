@@ -18,15 +18,3 @@ class OnGetPostsFailure extends PostState {
 
   OnGetPostsFailure({required this.failure});
 }
-
-class OnGetCommentById extends PostState {
-  final Comment comment;
-
-  OnGetCommentById({required this.comment});
-}
-
-class OnGetCommentByIdFailure extends PostState {
-  final Failure failure;
-
-  OnGetCommentByIdFailure({required this.failure});
-}

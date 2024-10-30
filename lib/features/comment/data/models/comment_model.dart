@@ -1,4 +1,4 @@
-import 'package:pinapp/features/post/domain/entities/comment.dart';
+import 'package:pinapp/features/comment/domain/entities/comment.dart';
 
 class CommentModel extends Comment {
   CommentModel({

@@ -1,7 +1,6 @@
 import 'package:core_encode/core_encode.dart';
 import 'package:dartz/dartz.dart';
 import 'package:pinapp/features/post/data/data_sources/post_remote_data_source.dart';
-import 'package:pinapp/features/post/domain/entities/comment.dart';
 import 'package:pinapp/features/post/domain/entities/post.dart';
 
 abstract class PostRepositoryBase {
@@ -11,5 +10,4 @@ abstract class PostRepositoryBase {
 
 Future<Either<Failure, List<Post>>> getAllPosts();
 
-Future<Either<Failure, Comment>> getCommentById(int id);
 }
