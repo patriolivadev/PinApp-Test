@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinapp/core/services/dependencies_service.dart';
 import 'package:pinapp/features/post/presentation/manager/post_bloc.dart';
+import 'package:pinapp/features/post/presentation/widgets/post_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -59,7 +60,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget buildBody() {
-    return Container();
+    return const Column(
+      children: [
+        PostWidget(
+          title: 'Segundo post fascinante',
+          body:
+              "Este es el contenido del segundo post. Se muestra un extracto para que el usuario pueda decidir si quiere leer más...",
+          comments: 2,
+          liked: true,
+        )
+      ],
+    );
   }
 
   PreferredSize buildAppBar() {
