@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class PostWidget extends StatefulWidget {
   final String title;
   final String body;
-  final int comments;
   final bool liked;
   final VoidCallback? onLikePressed;
   final VoidCallback? onCommentsPressed;
@@ -12,7 +11,6 @@ class PostWidget extends StatefulWidget {
     super.key,
     required this.title,
     required this.body,
-    required this.comments,
     this.liked = false,
     this.onLikePressed,
     this.onCommentsPressed,
@@ -26,6 +24,7 @@ class _PostWidgetState extends State<PostWidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -63,7 +62,7 @@ class _PostWidgetState extends State<PostWidget> {
       child: Row(
         children: [
           Icon(
-            Icons.favorite,
+            widget.liked ? Icons.favorite : Icons.favorite_border,
             color: widget.liked ? Colors.red : Colors.grey,
             size: 20,
           ),
@@ -82,17 +81,17 @@ class _PostWidgetState extends State<PostWidget> {
   Widget get buildCommentsButton {
     return GestureDetector(
       onTap: widget.onCommentsPressed,
-      child: Row(
+      child: const Row(
         children: [
-          const Icon(
+          Icon(
             Icons.chat_bubble_outline,
             color: Colors.black54,
             size: 20,
           ),
-          const SizedBox(width: 4),
+          SizedBox(width: 4),
           Text(
-            '${widget.comments} comentarios',
-            style: const TextStyle(
+            'comentarios',
+            style: TextStyle(
               color: Colors.black54,
             ),
           ),

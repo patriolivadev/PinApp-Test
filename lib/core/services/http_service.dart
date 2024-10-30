@@ -8,7 +8,7 @@ abstract class HttpServiceBase {
 
   HttpServiceBase({required this.http});
 
-  Future<Map> get(String url);
+  Future<dynamic> get(String url);
   Future<Map> post(String url, Entity data);
 }
 
@@ -17,7 +17,7 @@ class HttpService extends HttpServiceBase {
   HttpService({required super.http});
 
   @override
-  Future<Map> get(String url) async {
+  Future<dynamic> get(String url) async {
     try {
       final response = await http.get(Uri.parse(url));
 
