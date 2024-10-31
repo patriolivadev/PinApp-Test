@@ -93,14 +93,12 @@ class _CommentPageState extends State<CommentPage> {
   }
 
   Widget buildBody(ScrollController scrollController) {
-    return Expanded(
-      child: Column(
-        children: [
-          buildHeader(),
-          const Divider(),
-          buildCommentsList(scrollController),
-        ],
-      ),
+    return Column(
+      children: [
+        buildHeader(),
+        const Divider(),
+        buildCommentsList(scrollController),
+      ],
     );
   }
 
