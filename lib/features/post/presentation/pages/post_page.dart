@@ -90,13 +90,32 @@ class _PostPageState extends State<PostPage> {
 
   PreferredSize buildAppBar() {
     return PreferredSize(
-      preferredSize: const Size(40, 40),
-      child: Container(
-        color: Colors.lightBlueAccent,
-        child: const Center(child: Text("APPBAR")),
+      preferredSize: const Size.fromHeight(60),
+      child: AppBar(
+        backgroundColor: Colors.lightBlueAccent,
+        elevation: 5.0,
+        centerTitle: true,
+        title: const Text(
+          "FakeInsta",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blueAccent, Colors.lightBlueAccent],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
     );
   }
+
 
   void showCommentsModal(BuildContext context, int index) {
     showModalBottomSheet(

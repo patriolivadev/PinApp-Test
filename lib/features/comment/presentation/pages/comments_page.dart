@@ -30,32 +30,36 @@ class _CommentPageState extends State<CommentPage> {
 
   @override
   void initState() {
-    commentBloc.add(ActionGetCommentById(id: postBloc.posts![widget.postIndex].id));
+    commentBloc
+        .add(ActionGetCommentById(id: postBloc.posts![widget.postIndex].id));
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.5,
+      initialChildSize: 0.9,
       minChildSize: 0.3,
       maxChildSize: 0.9,
-      builder: (BuildContext context, ScrollController scrollController) {
-        return BlocConsumer(
-          bloc: commentBloc,
-          listener: listener,
-          builder: (context, state) {
-            return Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-              ),
-              child: builder(context, state, scrollController),
-            );
-          },
+      builder: draggableBuilder,
+    );
+  }
+
+  Widget draggableBuilder(
+      BuildContext context, ScrollController scrollController) {
+    return BlocConsumer(
+      bloc: commentBloc,
+      listener: listener,
+      builder: (context, state) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: builder(context, state, scrollController),
         );
       },
     );
@@ -89,28 +93,64 @@ class _CommentPageState extends State<CommentPage> {
   }
 
   Widget buildBody(ScrollController scrollController) {
-    return Column(
+    return Expanded(
+      child: Column(
+        children: [
+          buildHeader(),
+          const Divider(),
+          buildCommentsList(scrollController),
+        ],
+      ),
+    );
+  }
+
+  Stack buildHeader() {
+    return Stack(
       children: [
-        Row(
-          children: [
-            const Text(
-              'Comentarios',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.black54,
+        const Center(
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: Center(
+                  child: Icon(Icons.drag_handle),
+                ),
               ),
-            ),
-            buildLikeButton,
-          ],
-        ),
-        Expanded(
-          child: ListView.builder(
-            controller: scrollController,
-            itemCount: comments!.length,
-            itemBuilder: itemBuilder,
+              Center(
+                child: Text(
+                  'Comentarios',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.black54,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 40, top: 25),
+              child: buildLikeButton,
+            ),
+          ],
+        ),
       ],
+    );
+  }
+
+  Expanded buildCommentsList(ScrollController scrollController) {
+    return Expanded(
+      child: ListView.separated(
+        controller: scrollController,
+        itemCount: comments!.length,
+        itemBuilder: itemBuilder,
+        separatorBuilder: (context, index) => const Divider(
+          thickness: 0.3,
+        ),
+      ),
     );
   }
 
@@ -127,7 +167,8 @@ class _CommentPageState extends State<CommentPage> {
     return InkWell(
       onTap: () {
         setState(() {
-          postBloc.add(ToggleLike(index: widget.postIndex));        });
+          postBloc.add(ToggleLike(index: widget.postIndex));
+        });
       },
       overlayColor: WidgetStateColor.transparent,
       radius: 100,
@@ -140,7 +181,7 @@ class _CommentPageState extends State<CommentPage> {
             color: postBloc.posts![widget.postIndex].liked
                 ? Colors.red
                 : Colors.grey,
-            size: 20,
+            size: 25,
           ),
         ],
       ),
