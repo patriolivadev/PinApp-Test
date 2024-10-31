@@ -92,11 +92,10 @@ class _PostPageState extends State<PostPage> {
     return PreferredSize(
       preferredSize: const Size.fromHeight(60),
       child: AppBar(
-        backgroundColor: Colors.lightBlueAccent,
         elevation: 5.0,
         centerTitle: true,
         title: const Text(
-          "FakeInsta",
+          "PinApp Test",
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
