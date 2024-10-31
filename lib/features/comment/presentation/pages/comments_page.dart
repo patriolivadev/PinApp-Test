@@ -3,15 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinapp/core/services/dependencies_service.dart';
 import 'package:pinapp/features/comment/domain/entities/comment.dart';
 import 'package:pinapp/features/comment/presentation/manager/comment_bloc.dart';
+import 'package:pinapp/features/comment/presentation/widgets/comment_widget.dart';
 import 'package:pinapp/features/post/data/data_sources/post_local_data_source.dart';
-import 'package:pinapp/features/post/domain/entities/post.dart';
+import 'package:pinapp/features/post/presentation/manager/post_bloc.dart';
 
 class CommentPage extends StatefulWidget {
-  final Post post;
+  final int postIndex;
 
   const CommentPage({
     super.key,
-    required this.post,
+    required this.postIndex,
   });
 
   @override
@@ -19,7 +20,9 @@ class CommentPage extends StatefulWidget {
 }
 
 class _CommentPageState extends State<CommentPage> {
-  final CommentBloc bloc = getIt<CommentBloc>();
+  final CommentBloc commentBloc = getIt<CommentBloc>();
+  final PostBloc postBloc = getIt<PostBloc>();
+
   final PostLocalDataSourceBase localDataSourceBase =
       getIt<PostLocalDataSourceBase>();
 
@@ -27,18 +30,34 @@ class _CommentPageState extends State<CommentPage> {
 
   @override
   void initState() {
-    bloc.add(ActionGetCommentById(id: widget.post.id));
+    commentBloc.add(ActionGetCommentById(id: postBloc.posts![widget.postIndex].id));
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocConsumer(
-        bloc: bloc,
-        listener: listener,
-        builder: builder,
-      ),
+    return DraggableScrollableSheet(
+      initialChildSize: 0.5,
+      minChildSize: 0.3,
+      maxChildSize: 0.9,
+      builder: (BuildContext context, ScrollController scrollController) {
+        return BlocConsumer(
+          bloc: commentBloc,
+          listener: listener,
+          builder: (context, state) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+              ),
+              child: builder(context, state, scrollController),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -46,9 +65,10 @@ class _CommentPageState extends State<CommentPage> {
     switch (state.runtimeType) {
       case const (OnGetCommentsById):
         comments = (state as OnGetCommentsById).comments;
-        print(comments!.length);
+        break;
       case const (OnGetCommentByIdFailure):
         onGetCommentsFailure(context);
+        break;
     }
   }
 
@@ -59,16 +79,71 @@ class _CommentPageState extends State<CommentPage> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  Widget builder(context, state) {
+  Widget builder(context, state, ScrollController scrollController) {
     if (comments == null || state is OnLoadingComments) {
       return const Center(
         child: CircularProgressIndicator(),
       );
     }
-    return buildBody();
+    return buildBody(scrollController);
   }
 
-  Widget buildBody() {
-    return Container();
+  Widget buildBody(ScrollController scrollController) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            const Text(
+              'Comentarios',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.black54,
+              ),
+            ),
+            buildLikeButton,
+          ],
+        ),
+        Expanded(
+          child: ListView.builder(
+            controller: scrollController,
+            itemCount: comments!.length,
+            itemBuilder: itemBuilder,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget? itemBuilder(context, index) {
+    final comment = comments![index];
+    return CommentWidget(
+      email: comment.email,
+      name: comment.name,
+      body: comment.body,
+    );
+  }
+
+  Widget get buildLikeButton {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          postBloc.add(ToggleLike(index: widget.postIndex));        });
+      },
+      overlayColor: WidgetStateColor.transparent,
+      radius: 100,
+      child: Row(
+        children: [
+          Icon(
+            postBloc.posts![widget.postIndex].liked
+                ? Icons.favorite
+                : Icons.favorite_border,
+            color: postBloc.posts![widget.postIndex].liked
+                ? Colors.red
+                : Colors.grey,
+            size: 20,
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinapp/core/services/dependencies_service.dart';
-import 'package:pinapp/features/post/data/data_sources/post_local_data_source.dart';
+import 'package:pinapp/features/comment/presentation/pages/comments_page.dart';
 import 'package:pinapp/features/post/domain/entities/post.dart';
 import 'package:pinapp/features/post/presentation/manager/post_bloc.dart';
 import 'package:pinapp/features/post/presentation/widgets/post_widget.dart';
 
 class PostPage extends StatefulWidget {
-
   const PostPage({
     super.key,
   });
@@ -18,7 +17,6 @@ class PostPage extends StatefulWidget {
 
 class _PostPageState extends State<PostPage> {
   final PostBloc bloc = getIt<PostBloc>();
-  final PostLocalDataSourceBase localDataSourceBase = getIt<PostLocalDataSourceBase>();
 
   String name = '';
   String lastName = '';
@@ -46,7 +44,7 @@ class _PostPageState extends State<PostPage> {
   void listener(context, state) {
     switch (state.runtimeType) {
       case const (OnGetPosts):
-        posts = (state as OnGetPosts).posts;
+        bloc.posts = (state as OnGetPosts).posts;
       case const (OnGetPostsFailure):
         onGetPostsFailure(context);
     }
@@ -60,7 +58,7 @@ class _PostPageState extends State<PostPage> {
   }
 
   Widget builder(context, state) {
-    if (state is OnLoading || posts == null) {
+    if (state is OnLoading || bloc.posts == null) {
       return const Center(
         child: CircularProgressIndicator(),
       );
@@ -70,32 +68,24 @@ class _PostPageState extends State<PostPage> {
 
   Widget buildBody() {
     return ListView.builder(
-      itemCount: posts!.length,
-      itemBuilder: (context, index) {
-        return PostWidget(
-          title: posts![index].title,
-          body: posts![index].body,
-          liked: posts![index].liked,
-          onLikePressed: () {
-            setState(() {
-              setLike(index);
-            });
-          },
-          onCommentsPressed: () {
-            print('HOLAAAAA');
-          },
-        );
-      },
+      itemCount: bloc.posts!.length,
+      itemBuilder: itemBuilder,
     );
   }
 
-  void setLike(int index) {
-    posts![index].liked = !posts![index].liked;
-    if (posts![index].liked) {
-      localDataSourceBase.addLike(posts![index].id);
-    } else {
-      localDataSourceBase.removeLike(posts![index].id);
-    }
+  Widget? itemBuilder(context, index) {
+    return PostWidget(
+      title: bloc.posts![index].title,
+      body: bloc.posts![index].body,
+      liked: bloc.posts![index].liked,
+      onLikePressed: () {
+        setState(() {
+          bloc.add(ToggleLike(index: index));
+        });
+      },
+      onCommentsPressed: () => showCommentsModal(context, index),
+      postIndex: index,
+    );
   }
 
   PreferredSize buildAppBar() {
@@ -105,6 +95,17 @@ class _PostPageState extends State<PostPage> {
         color: Colors.lightBlueAccent,
         child: const Center(child: Text("APPBAR")),
       ),
+    );
+  }
+
+  void showCommentsModal(BuildContext context, int index) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return CommentPage(postIndex: index);
+      },
     );
   }
 }

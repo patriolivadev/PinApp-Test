@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:pinapp/core/services/dependencies_service.dart';
+import 'package:pinapp/features/post/presentation/manager/post_bloc.dart';
 
 class PostWidget extends StatefulWidget {
+  final int postIndex;
   final String title;
   final String body;
   final bool liked;
@@ -14,6 +17,7 @@ class PostWidget extends StatefulWidget {
     this.liked = false,
     this.onLikePressed,
     this.onCommentsPressed,
+    required this.postIndex,
   });
 
   @override
@@ -21,6 +25,8 @@ class PostWidget extends StatefulWidget {
 }
 
 class _PostWidgetState extends State<PostWidget> {
+  final PostBloc postBloc = getIt<PostBloc>();
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -68,15 +74,19 @@ class _PostWidgetState extends State<PostWidget> {
       child: Row(
         children: [
           Icon(
-            widget.liked ? Icons.favorite : Icons.favorite_border,
-            color: widget.liked ? Colors.red : Colors.grey,
+            postBloc.posts![widget.postIndex].liked
+                ? Icons.favorite
+                : Icons.favorite_border,
+            color: postBloc.posts![widget.postIndex].liked
+                ? Colors.red
+                : Colors.grey,
             size: 20,
           ),
           const SizedBox(width: 4),
           Text(
             'Me gusta',
             style: TextStyle(
-              color: widget.liked ? Colors.red : Colors.black54,
+              color: postBloc.posts![widget.postIndex].liked ? Colors.red : Colors.black54,
             ),
           ),
         ],

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:core_encode/core_encode.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 import 'package:pinapp/features/comment/domain/entities/comment.dart';
 import 'package:pinapp/features/comment/domain/use_cases/get_comment_by_id_use_case.dart';
 
@@ -9,6 +10,7 @@ part 'comment_event.dart';
 
 part 'comment_state.dart';
 
+@injectable
 class CommentBloc extends Bloc<CommentEvent, CommentState> {
   final GetCommentByIdUseCase getCommentByIdUseCase;
 
