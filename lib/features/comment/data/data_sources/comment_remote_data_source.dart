@@ -28,7 +28,6 @@ class CommentRemoteDataSource extends CommentRemoteDataSourceBase {
       List<Comment> comments = (result as List).map((line) {
         return CommentModel.fromJson(line);
       }).toList();
-      print('Se obtuvieron comentarios de forma nativa.');
       return comments;
     } else {
       final result = await http.get(url);
