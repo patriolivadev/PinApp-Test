@@ -8,7 +8,7 @@ abstract class CommentRemoteDataSourceBase {
 
   CommentRemoteDataSourceBase({required this.http});
 
-  Future<Comment> getCommentById(int id);
+  Future<List<Comment>> getCommentById(int id);
 
 }
 
@@ -17,13 +17,15 @@ class CommentRemoteDataSource extends CommentRemoteDataSourceBase {
   CommentRemoteDataSource({required super.http});
 
   @override
-  Future<Comment> getCommentById(int id) async {
+  Future<List<Comment>> getCommentById(int id) async {
     String url = 'https://jsonplaceholder.typicode.com/comments?postId=$id';
 
     final result = await http.get(url);
 
-    Comment comment = CommentModel.fromJson(result);
+    List<Comment> comments = (result as List).map((line) {
+      return CommentModel.fromJson(line);
+    }).toList();
 
-    return comment;
+    return comments;
   }
 }

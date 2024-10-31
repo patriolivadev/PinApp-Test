@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:pinapp/core/services/dependencies_service.dart';
-import 'package:pinapp/features/post/presentation/pages/home_page.dart';
+import 'package:pinapp/features/post/presentation/pages/post_page.dart';
 
 void main() async {
   await configureDependencies(Environment.dev);
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: const PostPage(),
     );
   }
 }

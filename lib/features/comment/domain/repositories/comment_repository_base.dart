@@ -7,5 +7,5 @@ abstract class CommentRepositoryBase {
   final CommentRemoteDataSourceBase remote;
   CommentRepositoryBase({required this.remote});
 
-Future<Either<Failure, Comment>> getCommentById(int id);
+Future<Either<Failure, List<Comment>>> getCommentById(int id);
 }

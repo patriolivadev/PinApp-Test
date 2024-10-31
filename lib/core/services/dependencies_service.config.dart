@@ -21,6 +21,8 @@ import 'package:pinapp/features/comment/domain/repositories/comment_repository_b
     as _i550;
 import 'package:pinapp/features/comment/domain/use_cases/get_comment_by_id_use_case.dart'
     as _i283;
+import 'package:pinapp/features/post/data/data_sources/post_local_data_source.dart'
+    as _i795;
 import 'package:pinapp/features/post/data/data_sources/post_remote_data_source.dart'
     as _i89;
 import 'package:pinapp/features/post/data/repositories/post_respository.dart'
@@ -31,13 +33,14 @@ import 'package:pinapp/features/post/domain/use_cases/get_post_use_case.dart'
     as _i230;
 import 'package:pinapp/features/post/presentation/manager/post_bloc.dart'
     as _i207;
+import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
-  _i174.GetIt init({
+  Future<_i174.GetIt> init({
     String? environment,
     _i526.EnvironmentFilter? environmentFilter,
-  }) {
+  }) async {
     final gh = _i526.GetItHelper(
       this,
       environment,
@@ -45,16 +48,24 @@ extension GetItInjectableX on _i174.GetIt {
     );
     final injectableModule = _$InjectableModule();
     gh.lazySingleton<_i519.Client>(() => injectableModule.client);
+    await gh.lazySingletonAsync<_i460.SharedPreferences>(
+      () => injectableModule.sharedPreferences,
+      preResolve: true,
+    );
     gh.factory<_i1068.HttpServiceBase>(
         () => _i1068.HttpService(http: gh<_i519.Client>()));
+    gh.factory<_i795.PostLocalDataSourceBase>(() => _i795.PostLocalDataSource(
+        sharedPreferences: gh<_i460.SharedPreferences>()));
     gh.factory<_i107.CommentRemoteDataSourceBase>(() =>
         _i107.CommentRemoteDataSource(http: gh<_i1068.HttpServiceBase>()));
     gh.factory<_i550.CommentRepositoryBase>(() => _i291.CommentRepository(
         remote: gh<_i107.CommentRemoteDataSourceBase>()));
+    gh.factory<_i89.PostRemoteDataSourceBase>(() => _i89.PostRemoteDataSource(
+          http: gh<_i1068.HttpServiceBase>(),
+          localDataSourceBase: gh<_i795.PostLocalDataSourceBase>(),
+        ));
     gh.factory<_i283.GetCommentByIdUseCase>(() => _i283.GetCommentByIdUseCase(
         commentRepositoryBase: gh<_i550.CommentRepositoryBase>()));
-    gh.factory<_i89.PostRemoteDataSourceBase>(
-        () => _i89.PostRemoteDataSource(http: gh<_i1068.HttpServiceBase>()));
     gh.factory<_i829.PostRepositoryBase>(
         () => _i63.PostRepository(remote: gh<_i89.PostRemoteDataSourceBase>()));
     gh.factory<_i230.GetPostUseCase>(() => _i230.GetPostUseCase(

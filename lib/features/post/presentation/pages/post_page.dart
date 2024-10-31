@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart';
 import 'package:pinapp/core/services/dependencies_service.dart';
+import 'package:pinapp/features/post/data/data_sources/post_local_data_source.dart';
 import 'package:pinapp/features/post/domain/entities/post.dart';
 import 'package:pinapp/features/post/presentation/manager/post_bloc.dart';
 import 'package:pinapp/features/post/presentation/widgets/post_widget.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class PostPage extends StatefulWidget {
+
+  const PostPage({
+    super.key,
+  });
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<PostPage> createState() => _PostPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _PostPageState extends State<PostPage> {
   final PostBloc bloc = getIt<PostBloc>();
+  final PostLocalDataSourceBase localDataSourceBase = getIt<PostLocalDataSourceBase>();
+
   String name = '';
   String lastName = '';
   bool liked = false;
@@ -43,10 +48,11 @@ class _HomePageState extends State<HomePage> {
       case const (OnGetPosts):
         posts = (state as OnGetPosts).posts;
       case const (OnGetPostsFailure):
+        onGetPostsFailure(context);
     }
   }
 
-  void onGetPostFailure(context) {
+  void onGetPostsFailure(context) {
     SnackBar snackBar = const SnackBar(
       content: Text('No se pudieron obtener los posts!'),
     );
@@ -54,7 +60,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget builder(context, state) {
-    print(state.runtimeType);
     if (state is OnLoading || posts == null) {
       return const Center(
         child: CircularProgressIndicator(),
@@ -73,15 +78,24 @@ class _HomePageState extends State<HomePage> {
           liked: posts![index].liked,
           onLikePressed: () {
             setState(() {
-              posts![index].liked = !posts![index].liked;
+              setLike(index);
             });
           },
           onCommentsPressed: () {
-            // Acción para el botón de comentarios
+            print('HOLAAAAA');
           },
         );
       },
     );
+  }
+
+  void setLike(int index) {
+    posts![index].liked = !posts![index].liked;
+    if (posts![index].liked) {
+      localDataSourceBase.addLike(posts![index].id);
+    } else {
+      localDataSourceBase.removeLike(posts![index].id);
+    }
   }
 
   PreferredSize buildAppBar() {

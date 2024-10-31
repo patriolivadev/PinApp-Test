@@ -6,7 +6,9 @@ import 'package:pinapp/features/post/domain/repositories/post_repository_base.da
 
 @Injectable(as: PostRepositoryBase)
 class PostRepository extends PostRepositoryBase {
-  PostRepository({required super.remote});
+  PostRepository({
+    required super.remote,
+  });
 
   @override
   Future<Either<Failure, List<Post>>> getAllPosts() async {

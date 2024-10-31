@@ -20,13 +20,13 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
     ActionGetCommentById event,
     Emitter<CommentState> emit,
   ) async {
-    emit(OnLoading());
+    emit(OnLoadingComments());
 
     final result = await getCommentByIdUseCase(event.id);
 
     result.fold(
       (l) => emit(OnGetCommentByIdFailure(failure: l)),
-      (r) => emit(OnGetCommentById(comment: r)),
+      (r) => emit(OnGetCommentsById(comments: r)),
     );
   }
 }

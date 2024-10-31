@@ -23,23 +23,29 @@ class PostWidget extends StatefulWidget {
 class _PostWidgetState extends State<PostWidget> {
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            buildTitle,
-            const SizedBox(height: 8),
-            buildBody,
-            const SizedBox(height: 16),
-            buildActions,
-          ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: widget.onCommentsPressed,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildTitle,
+                const SizedBox(height: 8),
+                buildBody,
+                const SizedBox(height: 16),
+                buildActions,
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -50,15 +56,15 @@ class _PostWidgetState extends State<PostWidget> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         buildLikeButton,
-        const SizedBox(width: 16),
-        buildCommentsButton,
       ],
     );
   }
 
   Widget get buildLikeButton {
-    return GestureDetector(
+    return InkWell(
       onTap: widget.onLikePressed,
+      overlayColor: WidgetStateColor.transparent,
+      radius: 100,
       child: Row(
         children: [
           Icon(
@@ -71,28 +77,6 @@ class _PostWidgetState extends State<PostWidget> {
             'Me gusta',
             style: TextStyle(
               color: widget.liked ? Colors.red : Colors.black54,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget get buildCommentsButton {
-    return GestureDetector(
-      onTap: widget.onCommentsPressed,
-      child: const Row(
-        children: [
-          Icon(
-            Icons.chat_bubble_outline,
-            color: Colors.black54,
-            size: 20,
-          ),
-          SizedBox(width: 4),
-          Text(
-            'comentarios',
-            style: TextStyle(
-              color: Colors.black54,
             ),
           ),
         ],

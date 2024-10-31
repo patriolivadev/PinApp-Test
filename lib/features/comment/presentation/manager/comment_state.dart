@@ -5,12 +5,12 @@ abstract class CommentState {}
 
 class CommentInitial extends CommentState {}
 
-class OnLoading extends CommentState {}
+class OnLoadingComments extends CommentState {}
 
-class OnGetCommentById extends CommentState {
-  final Comment comment;
+class OnGetCommentsById extends CommentState {
+  final List<Comment> comments;
 
-  OnGetCommentById({required this.comment});
+  OnGetCommentsById({required this.comments});
 }
 
 class OnGetCommentByIdFailure extends CommentState {

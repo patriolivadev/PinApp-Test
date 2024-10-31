@@ -9,9 +9,9 @@ class CommentRepository extends CommentRepositoryBase {
   CommentRepository({required super.remote});
 
   @override
-  Future<Either<Failure, Comment>> getCommentById(int id) async {
+  Future<Either<Failure, List<Comment>>> getCommentById(int id) async {
     try {
-      Comment comment = await remote.getCommentById(id);
+      List<Comment> comment = await remote.getCommentById(id);
       return Right(comment);
     } on Failure catch (e) {
       return Left(e);
