@@ -1,2 +1,2 @@
 # PinApp-Test
-Prueba técnica de PinApp
+La aplicación se encuentra en la rama "Develop".
